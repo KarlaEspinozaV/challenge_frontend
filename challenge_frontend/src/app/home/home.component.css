@@ -3,14 +3,50 @@
   text-align: center;
   background-color: #1e1e1e;
   min-height: 100vh;
-  color: white;
+}
+
+.centered-container {
+  width: 1116px;
+  height: 720px;
+  margin: 2rem auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1e1e1e;
+}
+
+.inner-container {
+  width: 360px;
+  height: 652px;
+  background-color: #1e1e1e;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.gift-image {
+  width: 250px;
+  height: 195px;
+  object-fit: contain;
 }
 
 h1 {
   color: #c2c2c2;
+  font-size: 40px;
+  font-family: "Avenir Next Bold", sans-serif;
   margin-bottom: 1rem;
+}
+
+h1 span {
+  color: #c2c2c2;
+  display: block;
 }
 
 p {
   color: #c2c2c2;
+  font-size: 16px;
+  font-family: "Avenir Next", sans-serif;
+  margin-bottom: 1rem;
 }
