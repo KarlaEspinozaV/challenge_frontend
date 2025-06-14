@@ -118,4 +118,46 @@ ion-item::part(native) {
   margin-right: 8px;
   opacity: 1;
   display: inline-block;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.input-container ion-icon.active {
+  color: #4caf50;
+}
+
+/* Popover Styles */
+.custom-popover {
+  --width: auto;
+  --max-width: 90%;
+  --min-width: 280px;
+}
+
+.popover-container {
+  --background: #8f8f90;
+  --color: #e9e7e7;
+  --border-radius: 40px;
+  --padding-start: 10px;
+  --padding-end: 10px;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 24px;
+}
+
+.popover-title {
+  margin: 0;
+  margin-bottom: 16px;
+}
+
+.encrypted-text {
+  margin: 0;
+  margin-bottom: 16px;
+}
+
+ion-button {
+  --background: #425af49f;
+  margin: 8px 0;
 }

@@ -16,11 +16,24 @@
                 <ion-item class="input-container">
                     <ion-input #ionInputEl [value]="inputModel" (ionInput)="onInput($event)"
                         placeholder="Escribe tu nombre" [counter]="true" maxlength="15"
-                        [counterFormatter]="customCounterFormatter" fill="clear">
+                        [counterFormatter]="customCounterFormatter" fill="clear" disabled="true">
                     </ion-input>
-                    <ion-icon name="mic"></ion-icon>
+                    <ion-icon name="mic" [class.active]="isListening" (click)="toggleListening()"></ion-icon>
                 </ion-item>
-                <ion-button expand="block" shape="round">Comenzar</ion-button>
+                <ion-button expand="block" shape="round" (click)="presentPopover($event)">Comenzar</ion-button>
+                <ion-popover #popover [isOpen]="isOpen" (didDismiss)="isOpen = false" class="custom-popover">
+                    <ng-template>
+                        <ion-content class="popover-container">
+                            <h3 class="popover-title">El nombre encriptado es:</h3>
+                            <p class="encrypted-text">{{encryptedText}}</p>
+                            <ion-button shape="round" (click)="onDecrypt()">Desencriptar nombre</ion-button>
+                            <ng-container *ngIf="showDecrypted">
+                                <h3 class="popover-title">El nombre desencriptado es:</h3>
+                                <p class="encrypted-text">{{decryptedText}}</p>
+                            </ng-container>
+                        </ion-content>
+                    </ng-template>
+                </ion-popover>
             </form>
         </div>
     </div>
