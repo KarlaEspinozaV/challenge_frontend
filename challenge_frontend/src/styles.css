@@ -1,13 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Minimal Ionic CSS - won't affect your existing styles */
+@import "@ionic/angular/css/core.css";
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  line-height: 1.6;
-  color: #333;
+/* Forzar fuentes específicas para el componente home con máxima especificidad */
+#home-component.home .home-content .home-title,
+#home-component.home .home-content .home-title *,
+#home-component.home .home-content .home-title .home-highlight {
+  font-family: "Avenir Next Bold", sans-serif;
+}
+
+#home-component.home .home-content .home__description,
+#home-component.home .home-content .home__description * {
+  font-family: "Avenir Next", sans-serif;
 }

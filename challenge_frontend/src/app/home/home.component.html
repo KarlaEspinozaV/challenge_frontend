@@ -1,13 +1,27 @@
-<div class="home-container">
-
-
-    <div class="centered-container">
-        <div class="inner-container">
-            <img src="/assets/hello_pwa.gif" alt="Hello PWA Gift" class="gift-image">
-            <h1>¡Te damos la <span>bienvenida a </span> <span> Banco Azteca!</span> </h1>
-            <p>Usa tu préstamo como dinero en efectivo
-                <br> o compra donde quieras
+<div class="home" id="home-component">
+    <div class="home-centered">
+        <div class="home-content">
+            <img src="/assets/hello_pwa.gif" alt="Animación de saludo, dos personas" class="home-image-gift" />
+            <h1 class="home-title">
+                ¡Te damos la <span class="home-highlight">bienvenida a</span>
+                <span class="home-highlight">Banco Azteca!</span>
+            </h1>
+            <p class="home__description">
+                Usa tu préstamo como dinero en efectivo<br />
+                o compra donde quieras
             </p>
+
+            <form class="form-container">
+                <ion-label>¿Cómo prefieres que te llamemos?</ion-label>
+                <ion-item class="input-container">
+                    <ion-input #ionInputEl [value]="inputModel" (ionInput)="onInput($event)"
+                        placeholder="Escribe tu nombre" [counter]="true" maxlength="15"
+                        [counterFormatter]="customCounterFormatter" fill="clear">
+                    </ion-input>
+                    <ion-icon name="mic"></ion-icon>
+                </ion-item>
+                <ion-button expand="block" shape="round">Comenzar</ion-button>
+            </form>
         </div>
     </div>
 </div>

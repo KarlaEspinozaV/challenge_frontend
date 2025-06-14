@@ -1,30 +1,47 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import {
+  IonInput,
+  IonLabel,
+  IonButton,
+  IonIcon,
+  IonItem,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { mic } from 'ionicons/icons';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [],
+  imports: [
+    CommonModule,
+    FormsModule,
+    IonInput,
+    IonLabel,
+    IonButton,
+    IonIcon,
+    IonItem,
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
 export class HomeComponent {
-  // Type safety for simple properties
-  readonly isLoading: boolean = false;
-  readonly userName: string = 'Usuario';
-  readonly containerWidth: number = 1116;
-  readonly containerHeight: number = 720;
+  inputModel = '';
 
-  // Type safety for methods
-  onImageLoad(): void {
-    console.log('Image loaded successfully');
+  @ViewChild('ionInputEl', { static: true }) ionInputEl!: IonInput;
+
+  constructor() {
+    addIcons({ mic });
   }
 
-  onImageError(event: Event): void {
-    console.error('Failed to load image:', event);
+  onInput(event: CustomEvent) {
+    const value = (event.target as HTMLIonInputElement).value ?? '';
+    const filteredValue = (value as string).replace(/[^a-zA-Z0-9]+/g, '');
+    this.ionInputEl.value = this.inputModel = filteredValue;
   }
 
-  // Type safety for computed properties
-  get welcomeMessage(): string {
-    return `¡Bienvenido, ${this.userName}!`;
+  customCounterFormatter(inputLength: number, maxLength: number): string {
+    return `${inputLength}/${maxLength} caracteres`;
   }
 }
