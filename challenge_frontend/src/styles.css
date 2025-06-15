@@ -1,6 +1,3 @@
-/* You can add global styles to this file, and also import other style files */
-
-/* Minimal Ionic CSS - won't affect your existing styles */
 @import "@ionic/angular/css/core.css";
 
 * {
@@ -9,7 +6,6 @@
   box-sizing: border-box;
 }
 
-/* Forzar fuentes específicas para el componente home con máxima especificidad */
 #home-component.home .home-content .home-title,
 #home-component.home .home-content .home-title *,
 #home-component.home .home-content .home-title .home-highlight {

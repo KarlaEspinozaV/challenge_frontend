@@ -12,7 +12,7 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { mic } from 'ionicons/icons';
-import * as CryptoJS from 'crypto-js';
+import CryptoJS from 'crypto-js';
 import { VoiceRecognitionService } from '../services/voice-recognition.service';
 import { Subscription } from 'rxjs';
 
@@ -41,8 +41,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   showDecrypted = false;
   isListening = false;
 
-  private secretKey: string = 'your-secret-key-here'; // Replace with your actual secret key
-  private vector: string = 'your-vector-here'; // Replace with your actual vector
+  private secretKey: string = 'your-secret-key-here';
+  private vector: string = 'your-vector-here';
   private subscriptions: Subscription[] = [];
 
   @ViewChild('ionInputEl', { static: true }) ionInputEl!: IonInput;
@@ -53,18 +53,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // Subscribe to voice recognition state
     this.subscriptions.push(
       this.voiceRecognitionService.getIsListening().subscribe((isListening) => {
         this.isListening = isListening;
       })
     );
 
-    // Subscribe to transcript updates
     this.subscriptions.push(
       this.voiceRecognitionService.getTranscript().subscribe((transcript) => {
         if (transcript) {
-          // Ensure the text is within the 15 character limit
           const filteredText = transcript.slice(0, 15);
           this.inputModel = filteredText;
           this.ionInputEl.value = filteredText;
@@ -74,13 +71,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Clean up subscriptions
     this.subscriptions.forEach((sub) => sub.unsubscribe());
   }
 
   onInput(event: CustomEvent) {
     const value = (event.target as HTMLIonInputElement).value ?? '';
-    // Remove spaces and non-alphanumeric characters
     const filteredValue = (value as string).replace(/[^a-zA-Z0-9]/g, '');
     this.ionInputEl.value = this.inputModel = filteredValue;
   }
@@ -107,7 +102,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   presentPopover(e: Event) {
-    // Stop voice recording if it's active
     if (this.isListening) {
       this.voiceRecognitionService.stop();
     }
@@ -115,7 +109,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.inputModel) {
       this.encryptedText = this.encryptText(this.inputModel);
       this.showDecrypted = false;
-      // Clear the input after encryption
       this.inputModel = '';
       this.ionInputEl.value = '';
     }

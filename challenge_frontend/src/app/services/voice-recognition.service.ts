@@ -15,21 +15,19 @@ export class VoiceRecognitionService {
   }
 
   private init() {
-    // Check if the browser supports speech recognition
     if ('webkitSpeechRecognition' in window) {
       this.recognition = new (window as any).webkitSpeechRecognition();
       this.recognition.continuous = true;
       this.recognition.interimResults = true;
-      this.recognition.lang = 'es-ES'; // Set language to Spanish
+      this.recognition.lang = 'es-ES';
 
       this.recognition.onresult = (event: any) => {
         const current = event.resultIndex;
         const transcript = event.results[current][0].transcript;
-        // Remove spaces and non-alphanumeric characters
+
         const filteredTranscript = transcript.replace(/[^a-zA-Z0-9]/g, '');
         this.transcript.next(filteredTranscript);
 
-        // Stop if we reach 15 characters
         if (filteredTranscript.length >= 15) {
           this.stop();
         }
@@ -57,7 +55,6 @@ export class VoiceRecognitionService {
       this.recognition.start();
       this.isListening.next(true);
 
-      // Set 5 second timeout
       this.timeoutId = setTimeout(() => {
         this.stop();
       }, 5000);

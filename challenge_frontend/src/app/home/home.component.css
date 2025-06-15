@@ -5,7 +5,6 @@
   --bg-color: #1e1e1e;
 }
 
-/* New structure styles */
 .home {
   padding: 2rem;
   text-align: center;
@@ -40,8 +39,6 @@
   margin-bottom: 1rem;
 }
 
-/* Selectores con ID para máxima especificidad (vence a Ionic) */
-/* Typography with high specificity to override Ionic styles */
 #home-component.home .home-content .home-title {
   color: var(--primary-color);
   font-size: 40px;
@@ -137,7 +134,6 @@ ion-item::part(native) {
   color: #4caf50;
 }
 
-/* Popover Styles */
 .custom-popover {
   --width: auto;
   --max-width: 90%;
