@@ -107,9 +107,17 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   presentPopover(e: Event) {
+    // Stop voice recording if it's active
+    if (this.isListening) {
+      this.voiceRecognitionService.stop();
+    }
+
     if (this.inputModel) {
       this.encryptedText = this.encryptText(this.inputModel);
       this.showDecrypted = false;
+      // Clear the input after encryption
+      this.inputModel = '';
+      this.ionInputEl.value = '';
     }
     this.popover.event = e;
     this.isOpen = true;

@@ -103,6 +103,17 @@ ion-item::part(native) {
   --font-size: 16px;
   text-transform: none;
   margin-top: 35px;
+  transition: --background 0.3s ease;
+}
+
+.form-container ion-button.active {
+  --background: #425af4;
+}
+
+.form-container ion-button[disabled] {
+  --background: #c2c2c2;
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .input-container {

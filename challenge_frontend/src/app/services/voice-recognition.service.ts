@@ -8,6 +8,7 @@ export class VoiceRecognitionService {
   private recognition: any;
   private isListening = new BehaviorSubject<boolean>(false);
   private transcript = new BehaviorSubject<string>('');
+  private timeoutId: any;
 
   constructor() {
     this.init();
@@ -27,6 +28,11 @@ export class VoiceRecognitionService {
         // Remove spaces and non-alphanumeric characters
         const filteredTranscript = transcript.replace(/[^a-zA-Z0-9]/g, '');
         this.transcript.next(filteredTranscript);
+
+        // Stop if we reach 15 characters
+        if (filteredTranscript.length >= 15) {
+          this.stop();
+        }
       };
 
       this.recognition.onerror = (event: any) => {
@@ -36,6 +42,10 @@ export class VoiceRecognitionService {
 
       this.recognition.onend = () => {
         this.isListening.next(false);
+        if (this.timeoutId) {
+          clearTimeout(this.timeoutId);
+          this.timeoutId = null;
+        }
       };
     } else {
       console.error('Speech recognition not supported in this browser.');
@@ -46,6 +56,11 @@ export class VoiceRecognitionService {
     if (this.recognition) {
       this.recognition.start();
       this.isListening.next(true);
+
+      // Set 5 second timeout
+      this.timeoutId = setTimeout(() => {
+        this.stop();
+      }, 5000);
     }
   }
 
@@ -53,6 +68,10 @@ export class VoiceRecognitionService {
     if (this.recognition) {
       this.recognition.stop();
       this.isListening.next(false);
+      if (this.timeoutId) {
+        clearTimeout(this.timeoutId);
+        this.timeoutId = null;
+      }
     }
   }
 
