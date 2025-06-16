@@ -10,11 +10,15 @@ import {
   IonPopover,
   IonContent,
 } from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { mic } from 'ionicons/icons';
-import CryptoJS from 'crypto-js';
-import { VoiceRecognitionService } from '../services/voice-recognition.service';
-import { Subscription } from 'rxjs';
+
+import { HomeFacade } from './facades/home.facade';
+import {
+  HomeComponentState,
+  IonicInputEvent,
+  PopoverPresentEvent,
+  CounterFormatterFunction,
+  VoidFunction,
+} from './home.interfaces';
 
 @Component({
   selector: 'app-home',
@@ -33,101 +37,121 @@ import { Subscription } from 'rxjs';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent implements OnInit, OnDestroy {
-  inputModel = '';
-  isOpen = false;
-  encryptedText = '';
-  decryptedText = '';
-  showDecrypted = false;
-  isListening = false;
+export class HomeComponent
+  implements OnInit, OnDestroy, Partial<HomeComponentState>
+{
+  // ================================================================
+  // VIEW CHILDREN
+  // ================================================================
 
-  private secretKey: string = 'your-secret-key-here';
-  private vector: string = 'your-vector-here';
-  private subscriptions: Subscription[] = [];
+  @ViewChild('ionInputEl', { static: true })
+  private readonly ionInputEl!: IonInput;
 
-  @ViewChild('ionInputEl', { static: true }) ionInputEl!: IonInput;
-  @ViewChild('popover') popover!: HTMLIonPopoverElement;
+  @ViewChild('popover')
+  private readonly popover!: HTMLIonPopoverElement;
 
-  constructor(private voiceRecognitionService: VoiceRecognitionService) {
-    addIcons({ mic });
+  // ================================================================
+  // CONSTRUCTOR
+  // ================================================================
+
+  constructor(public readonly facade: HomeFacade) {}
+
+  // ================================================================
+  // LIFECYCLE HOOKS
+  // ================================================================
+
+  ngOnInit(): void {
+    this.facade.initialize();
   }
 
-  ngOnInit() {
-    this.subscriptions.push(
-      this.voiceRecognitionService.getIsListening().subscribe((isListening) => {
-        this.isListening = isListening;
-      })
-    );
-
-    this.subscriptions.push(
-      this.voiceRecognitionService.getTranscript().subscribe((transcript) => {
-        if (transcript) {
-          const filteredText = transcript.slice(0, 15);
-          this.inputModel = filteredText;
-          this.ionInputEl.value = filteredText;
-        }
-      })
-    );
+  ngOnDestroy(): void {
+    this.facade.cleanup();
   }
 
-  ngOnDestroy() {
-    this.subscriptions.forEach((sub) => sub.unsubscribe());
+  // ================================================================
+  // TEMPLATE GETTERS (delegated to facade)
+  // ================================================================
+
+  get inputModel(): string {
+    return this.facade.inputModel;
   }
 
-  onInput(event: CustomEvent) {
-    const value = (event.target as HTMLIonInputElement).value ?? '';
-    const filteredValue = (value as string).replace(/[^a-zA-Z0-9]/g, '');
-    this.ionInputEl.value = this.inputModel = filteredValue;
+  get isOpen(): boolean {
+    return this.facade.isOpen;
   }
 
-  customCounterFormatter(inputLength: number, maxLength: number): string {
-    return `${inputLength}/${maxLength} caracteres`;
+  get encryptedText(): string {
+    return this.facade.encryptedText;
   }
 
-  encryptText(text: string): string {
-    return CryptoJS.AES.encrypt(text, this.secretKey, {
-      iv: CryptoJS.enc.Utf8.parse(this.vector),
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7,
-    }).toString();
+  get decryptedText(): string {
+    return this.facade.decryptedText;
   }
 
-  decryptText(encryptedText: string): string {
-    const decrypted = CryptoJS.AES.decrypt(encryptedText, this.secretKey, {
-      iv: CryptoJS.enc.Utf8.parse(this.vector),
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7,
-    });
-    return decrypted.toString(CryptoJS.enc.Utf8);
+  get showDecrypted(): boolean {
+    return this.facade.showDecrypted;
   }
 
-  presentPopover(e: Event) {
-    if (this.isListening) {
-      this.voiceRecognitionService.stop();
-    }
-
-    if (this.inputModel) {
-      this.encryptedText = this.encryptText(this.inputModel);
-      this.showDecrypted = false;
-      this.inputModel = '';
-      this.ionInputEl.value = '';
-    }
-    this.popover.event = e;
-    this.isOpen = true;
+  get isListening(): boolean {
+    return this.facade.isListening;
   }
 
-  onDecrypt() {
-    if (this.encryptedText) {
-      this.decryptedText = this.decryptText(this.encryptedText);
-      this.showDecrypted = true;
-    }
+  get maxLength(): number {
+    return this.facade.maxLength;
   }
 
-  toggleListening() {
-    if (this.isListening) {
-      this.voiceRecognitionService.stop();
-    } else {
-      this.voiceRecognitionService.start();
-    }
+  // ================================================================
+  // TEMPLATE METHODS (delegated to facade)
+  // ================================================================
+
+  /**
+   * Handles input events from the ion-input field
+   * @param event - The Ionic input event
+   */
+  onInput(event: IonicInputEvent): void {
+    const result = this.facade.handleInput(event);
+    // Update ViewChild to reflect the filtered value
+    this.ionInputEl.value = result.filteredValue;
+  }
+
+  /**
+   * Custom counter formatter for the input field
+   */
+  customCounterFormatter: CounterFormatterFunction = (
+    inputLength: number,
+    maxLength: number
+  ): string => {
+    return this.facade.customCounterFormatter(inputLength, maxLength);
+  };
+
+  /**
+   * Presents the encryption result popover
+   * @param e - The presentation event
+   */
+  presentPopover(e: PopoverPresentEvent): void {
+    this.facade.presentPopover(e);
+    // Handle ViewChild-specific logic
+    this.facade.setPopoverEvent(this.popover, e);
+  }
+
+  /**
+   * Handles decryption of the encrypted text
+   */
+  onDecrypt(): void {
+    this.facade.handleDecrypt();
+  }
+
+  /**
+   * Toggles voice recognition listening state
+   */
+  toggleListening: VoidFunction = (): void => {
+    this.facade.toggleListening();
+  };
+
+  /**
+   * Handles popover dismiss
+   */
+  onPopoverDismiss(): void {
+    this.facade.setIsOpen(false);
   }
 }

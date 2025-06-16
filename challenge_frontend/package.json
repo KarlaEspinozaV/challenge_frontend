@@ -6,7 +6,12 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:watch": "ng test --watch",
+    "test:ci": "ng test --watch=false --browsers=ChromeHeadlessCI",
+    "test:coverage": "ng test --code-coverage --watch=false",
+    "test:home": "ng test --include='src/app/home/**/*.spec.ts' --watch=false",
+    "test:component": "ng test src/app/home/home.component.spec.ts --watch=false"
   },
   "private": true,
   "dependencies": {

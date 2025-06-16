@@ -1,42 +1,60 @@
 <div class="home" id="home-component">
     <div class="home-centered">
-        <div class="home-content">
+        <main class="home-content">
             <img src="/assets/hello_pwa.gif" alt="Animación de saludo, dos personas" class="home-image-gift" />
             <h1 class="home-title">
-                ¡Te damos la <span class="home-highlight">bienvenida a</span>
-                <span class="home-highlight">Banco Azteca!</span>
+                ¡Te damos la bienvenida a
+                Banco Azteca!
             </h1>
+
             <p class="home__description">
                 Usa tu préstamo como dinero en efectivo<br />
                 o compra donde quieras
             </p>
 
             <form class="form-container">
-                <ion-label>¿Cómo prefieres que te llamemos?</ion-label>
+
+                <ion-label for="user-name-input">¿Cómo prefieres que te llamemos?</ion-label>
+
                 <ion-item class="input-container">
-                    <ion-input #ionInputEl [value]="inputModel" (ionInput)="onInput($event)"
-                        placeholder="Escribe tu nombre" [counter]="true" maxlength="15"
-                        [counterFormatter]="customCounterFormatter" fill="clear" disabled="true">
+                    <ion-input #ionInputEl id="user-name-input" name="userName" [value]="inputModel"
+                        (ionInput)="onInput($event)" placeholder="Escribe tu nombre" [counter]="true"
+                        [maxlength]="maxLength" [counterFormatter]="customCounterFormatter" fill="clear" disabled="true"
+                        aria-label="Campo de nombre, solo se puede llenar por voz" aria-describedby="voice-help">
                     </ion-input>
-                    <ion-icon name="mic" [class.active]="isListening" (click)="toggleListening()"></ion-icon>
+                    <ion-icon name="mic" [class.active]="isListening" (click)="toggleListening()"
+                        [attr.aria-pressed]="isListening"
+                        [attr.aria-label]="isListening ? 'Detener grabación de voz' : 'Iniciar grabación de voz'"
+                        role="button" tabindex="0"></ion-icon>
                 </ion-item>
+
                 <ion-button expand="block" shape="round" (click)="presentPopover($event)"
-                    [class.active]="inputModel.length > 0" [disabled]="inputModel.length === 0">Comenzar</ion-button>
-                <ion-popover #popover [isOpen]="isOpen" (didDismiss)="isOpen = false" class="custom-popover">
+                    [class.active]="inputModel.length > 0" [disabled]="inputModel.length === 0"
+                    [attr.aria-describedby]="inputModel.length === 0 ? 'button-help' : null">Comenzar</ion-button>
+
+                <ion-popover #popover [isOpen]="isOpen" (didDismiss)="onPopoverDismiss()" class="custom-popover"
+                    role="dialog" [attr.aria-label]="'Resultado de encriptación'">
                     <ng-template>
                         <ion-content class="popover-container">
                             <h3 class="popover-title">El nombre encriptado es:</h3>
-                            <p class="encrypted-text">{{encryptedText}}</p>
-                            <ion-button shape="round" (click)="onDecrypt()">Desencriptar nombre</ion-button>
+                            <p class="encrypted-text" [attr.aria-label]="'Texto encriptado: ' + encryptedText">
+                                {{encryptedText}}
+                            </p>
+                            <ion-button shape="round" (click)="onDecrypt()"
+                                aria-label="Desencriptar el nombre encriptado">
+                                Desencriptar nombre
+                            </ion-button>
                             <ng-container *ngIf="showDecrypted">
                                 <h3 class="popover-title">El nombre desencriptado es:</h3>
-                                <p class="encrypted-text">{{decryptedText}}</p>
+                                <p class="encrypted-text" [attr.aria-label]="'Texto desencriptado: ' + decryptedText">
+                                    {{decryptedText}}
+                                </p>
                             </ng-container>
                         </ion-content>
                     </ng-template>
                 </ion-popover>
-            </form>
 
-        </div>
+            </form>
+        </main>
     </div>
 </div>
